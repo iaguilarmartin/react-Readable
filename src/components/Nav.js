@@ -1,24 +1,8 @@
 import React, {Component} from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 class Nav extends Component {
-    state = {
-        categories: [
-            {
-                name: 'react',
-                path: 'react'
-            },
-            {
-                name: 'redux',
-                path: 'redux'
-            },
-            {
-                name: 'udacity',
-                path: 'udacity'
-            }
-        ]
-    }
-
     render() {
         return (
             <nav>
@@ -26,7 +10,7 @@ class Nav extends Component {
                     <Link className="brand-logo right" to="/">Readable</Link>
                     <ul id="nav-mobile" className="left">
                         <li><Link to="/">All</Link></li>
-                        {this.state.categories.map(category => (
+                        {this.props.categories.map(category => (
                             <li key={category.path}><Link to={{
                                 pathname: '/',
                                 search: '?category=' + category.path
@@ -39,4 +23,10 @@ class Nav extends Component {
     }
 }
 
-export default Nav;
+function mapStateToProps({categories}) {
+    return {
+        categories
+    }
+}
+
+export default connect(mapStateToProps)(Nav);

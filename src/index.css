@@ -168,6 +168,6 @@ textarea:focus {
     border: 1px solid #26a69a;
 }
 
-select {
+form select {
     background-color: #f5f5f5;
 }
