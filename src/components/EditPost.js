@@ -1,53 +1,39 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { deletePost, updatePost, createPost } from '../actions/postsActions';
 
 class EditPost extends Component {
-
-    state = {
-        post: {},
-        categories: [
-            {
-                name: 'react',
-                path: 'react'
-            },
-            {
-                name: 'redux',
-                path: 'redux'
-            },
-            {
-                name: 'udacity',
-                path: 'udacity'
-            }
-        ]
-    };
 
     deletePost(e, postId) {
         e.preventDefault();
 
-        console.log("Delete post", postId);
+        this.props.deletePost(postId);
+
+        this.props.history.goBack();
+        this.props.history.goBack();
     }
 
     savePost(e, postId) {
         e.preventDefault();
 
-        console.log("Save post", postId);
+        const data = {
+            body: e.target.body.value,
+            author: e.target.author.value,
+            category: e.target.category.value,
+            title: e.target.title.value
+        };
+
+        if (postId) {
+            this.props.updatePost(postId, data);
+        } else {
+            this.props.createPost(data);
+        }
+
+        this.props.history.goBack();
     }
 
     render() {
-        let { post, categories } = this.state;
-        const postId = this.props.location.pathname.slice(11);
-
-        if (postId) {
-            post = {
-                id: '8xf0y6ziyjabvozdd253nd',
-                timestamp: 1467166872634,
-                title: 'Udacity is the best place to learn React',
-                body: 'Everyone says so after all.',
-                author: 'thingtwo',
-                category: 'react',
-                voteScore: 6,
-                deleted: false
-            };
-        }
+        const { post, categories } = this.props;
 
         return (
             <div className="row">
@@ -92,4 +78,21 @@ class EditPost extends Component {
     }
 }
 
-export default EditPost;
+function mapStateToProps({ posts, categories }, ownProps) {
+    const postId = ownProps.location.pathname.slice(11);
+
+    return {
+        categories,
+        post: postId ? posts.items[postId] : {}
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        createPost: data => dispatch(createPost(data)),
+        updatePost: (postId, data) => dispatch(updatePost(postId, data)),
+        deletePost: postId => dispatch(deletePost(postId))
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditPost);

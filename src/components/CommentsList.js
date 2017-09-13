@@ -1,41 +1,29 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'react-modal';
+import { connect } from 'react-redux';
 
 import Comment from './Comment';
 import SelectOrder from './SelectOrder';
 import EditComment from './EditComment';
+import { orderComments, voteComment, deleteComment } from '../actions/commentsActions';
 
 class CommentsList extends Component {
     state = {
         showEditDialog: false,
-        editingComment: null,
-        comments: [
-            {
-                id: '894tuq4ut84ut8v4t8wun89g',
-                parentId: "8xf0y6ziyjabvozdd253nd",
-                timestamp: 1468166872634,
-                body: 'Hi there! I am a COMMENT.',
-                author: 'thingtwo',
-                voteScore: 6,
-                deleted: false,
-                parentDeleted: false
-            },
-            {
-                id: '8tu4bsun805n8un48ve89',
-                parentId: "8xf0y6ziyjabvozdd253nd",
-                timestamp: 1469479767190,
-                body: 'Comments. Are. Cool.',
-                author: 'thingone',
-                voteScore: -5,
-                deleted: false,
-                parentDeleted: false
-            }
-        ]
+        editingComment: null
     };
 
     commentVoted(commentId, positive) {
-        console.log('New vote for comment', commentId, positive);
+        this.props.addVote(commentId, positive);
+    }
+
+    deleteComment(commentId) {
+        this.props.deleteComment(commentId);
+        this.setState({
+            editingComment: null,
+            showEditDialog: false
+        });
     }
 
     editComment(commentId) {
@@ -45,25 +33,21 @@ class CommentsList extends Component {
         });
     }
 
-    deleteComment(commentId) {
-        console.log(commentId);
-    }
-
     sortComments(criteria) {
-        console.log(criteria);
+        this.props.changeOrder(criteria);
     }
 
     closeEditCommentDialog = () => this.setState({showEditDialog: false});
 
     render() {
-        const parentId = this.props.postId;
+        const { comments, order, postId } = this.props;
 
         return (
             <div className="section">
                 <h5>Comments</h5>
-                <SelectOrder onOrderChanged={c => this.sortComments(c)}/>
+                <SelectOrder initialValue={order}  onOrderChanged={c => this.sortComments(c)}/>
                 <ul className="collection col s12 comments-container">
-                    {this.state.comments.map(comment => (
+                    {comments.map(comment => (
                         <Comment key={comment.id}
                                  id={comment.id}
                                  author={comment.author}
@@ -78,7 +62,7 @@ class CommentsList extends Component {
                     <li className="collection-item new-comment">
                         <span className="title">Add new comment</span>
                         <div className="row">
-                            <EditComment/>
+                            <EditComment postId={postId}/>
                         </div>
                     </li>
                 </ul>
@@ -94,7 +78,7 @@ class CommentsList extends Component {
                         <div className="new-comment">
                             <span className="close" onClick={this.closeEditCommentDialog}>X</span>
                             <h5 className="title">Edit comment</h5>
-                            <EditComment commentId={this.state.editingComment} commentSaved={this.closeEditCommentDialog}/>
+                            <EditComment commentId={this.state.editingComment} postId={postId} commentSaved={this.closeEditCommentDialog}/>
                             <a onClick={() => this.deleteComment(this.state.editingComment)} className="waves-effect waves-red btn-flat"><i className="material-icons left">delete</i>Delete</a>
                         </div>
                     )}
@@ -108,4 +92,27 @@ CommentsList.propTypes = {
     postId: PropTypes.string.isRequired
 };
 
-export default CommentsList;
+function mapStateToProps({comments}, ownProps) {
+    const order = comments.sortBy;
+    let commentsList = Object.keys(comments.items).map(key => comments.items[key]);
+    commentsList = commentsList.filter(comment => comment.parentId === ownProps.postId && !comment.deleted);
+
+    commentsList.sort((a, b) =>
+        order === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
+    );
+
+    return {
+        order,
+        comments: commentsList
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        changeOrder: criteria => dispatch(orderComments(criteria)),
+        addVote: (commentId, positive) => dispatch(voteComment(commentId, positive)),
+        deleteComment: commentId => dispatch(deleteComment(commentId))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CommentsList);

@@ -17,7 +17,7 @@ class PostsList extends Component {
     }
 
     render() {
-        const header = this.props.category && this.props.category.name || "All posts";
+        const header = (this.props.category && this.props.category.name) || "All posts";
 
         return (
             <div>
@@ -49,9 +49,7 @@ function mapStateToProps({posts, categories}, ownProps) {
     const order = posts.sortBy;
 
     let postsList = Object.keys(posts.items).map(postId => posts.items[postId]);
-    if (category) {
-        postsList = postsList.filter(post => post.category === category.path);
-    }
+    postsList = postsList.filter(post => !post.deleted && (!category || post.category === category.path));
 
     postsList.sort((a, b) =>
         order === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp

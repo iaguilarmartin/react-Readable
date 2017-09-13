@@ -1,36 +1,29 @@
 import React, { Component } from 'react';
 import moment from 'moment';
+import { connect } from 'react-redux';
 
 import avatarImg from '../images/avatar.png';
 import CommentsList from './CommentsList';
 import Score from './Score';
 import FloatingButton from './FloatingButton';
+import { votePost } from '../actions/postsActions';
 
 class Post extends Component {
-    state = {
-        post: {
-            id: '8xf0y6ziyjabvozdd253nd',
-            timestamp: 1467166872634,
-            title: 'Udacity is the best place to learn React',
-            body: 'Everyone says so after all.',
-            author: 'thingtwo',
-            category: 'react',
-            voteScore: 6,
-            deleted: false
-        }
-    };
-
     vote(positive) {
-        console.log(positive);
+        this.props.addVote(this.props.post.id, positive);
     }
 
     edit() {
-        this.props.history.push('/edit-post/' + this.state.post.id);
+        this.props.history.push('/edit-post/' + this.props.post.id);
     }
 
     render() {
-        const postId = this.props.location.pathname.slice(6);
-        const { post } = this.state;
+        const { post } = this.props;
+
+        if (!post || post.deleted) {
+            return (<h5>Ups! This post is no longer available</h5>);
+        }
+
         const dateString = moment(post.timestamp).format('LL');
 
         return (
@@ -41,7 +34,7 @@ class Post extends Component {
                         <h4 className="header post-title">{post.title}</h4>
                         <div className="post z-depth-2 white">
                             <div>
-                                <img className="author-avatar" src={avatarImg} />
+                                <img className="author-avatar" src={avatarImg} alt="User avatar" />
                                 <div className="author-info">
                                     <span className="post-author red-text text-lighten-1">{post.author}</span>
                                     <label>{dateString}</label>
@@ -62,4 +55,19 @@ class Post extends Component {
     }
 }
 
-export default Post;
+function mapStateToProps({posts}, ownProps) {
+    const postId = ownProps.location.pathname.slice(6);
+    const post = posts.items[postId] || null;
+
+    return {
+        post
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        addVote: (postId, positive) => dispatch(votePost(postId, positive))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Post);
