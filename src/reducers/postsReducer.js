@@ -8,7 +8,8 @@ import {
     VOTE_POST,
     DELETE_POST,
     UPDATE_POST,
-    CREATE_POST
+	CREATE_POST,
+	FETCH_POSTS
 } from '../actions/postsActions';
 
 const postsReducer = function (state = initialState.posts, action) {
@@ -68,7 +69,17 @@ const postsReducer = function (state = initialState.posts, action) {
                         ...action.data
                     }
                 }
-            };
+			};
+		case FETCH_POSTS: {
+			const { error, posts, pending } = action;
+
+			return {
+				...state,
+				loading: pending,
+				error: pending ? null : error,
+				items: pending ? [] : (posts || [])
+			}
+		}
         default:
             return state;
     }

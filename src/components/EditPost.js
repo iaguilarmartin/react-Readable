@@ -82,7 +82,7 @@ function mapStateToProps({ posts, categories }, ownProps) {
     const postId = ownProps.location.pathname.slice(11);
 
     return {
-        categories,
+        categories: categories.items,
         post: postId ? posts.items[postId] : {}
     }
 }
