@@ -6,21 +6,32 @@ import avatarImg from '../images/avatar.png';
 import CommentsList from './CommentsList';
 import Score from './Score';
 import FloatingButton from './FloatingButton';
-import { votePost } from '../actions/postsActions';
+import { fetchPost, orderPostComments, votePost, clearCurrentPost } from '../actions/currentPostActions';
 
 class Post extends Component {
+    componentWillMount() {
+        this.props.fetchPost(this.props.postId);
+    }
+
+    componentWillUnmount() {
+        this.props.clearCurrentPost();
+    }
+
     vote(positive) {
-        this.props.addVote(this.props.post.id, positive);
+        this.props.votePost(this.props.postId, positive);
     }
 
     edit() {
-        this.props.history.push('/edit-post/' + this.props.post.id);
+        this.props.history.push('/edit-post/' + this.props.postId);
     }
 
     render() {
-        const { post } = this.props;
+        const { post, loading, comments, orderComments, voting } = this.props;
 
-        if (!post || post.deleted) {
+        if (loading) {
+            return (<h5>Loading post data...</h5>);
+        }
+        else if (!post || post.deleted) {
             return (<h5>Ups! This post is no longer available</h5>);
         }
 
@@ -41,32 +52,44 @@ class Post extends Component {
                                 </div>
                             </div>
                             <p>{post.body}</p>
-                            <Score score={post.voteScore} onVote={p => this.vote(p)}/>
+                            <Score score={post.voteScore} disable={voting} onVote={p => this.vote(p)}/>
                             <div className="post-edit">
                                 <FloatingButton icon="edit" btnClick={() => this.edit()}/>
                             </div>
                         </div>
                     </div>
 
-                    <CommentsList postId={post.id}/>
+                    <CommentsList postId={post.id}
+                                  comments={comments.items}
+                                  onVoted={() => {}}
+                                  onDeleted={() => {}}
+                                  onOrderChanged={c => orderComments(c)}
+                                  order={comments.sortBy}/>
                 </div>
             </div>
         )
     }
 }
 
-function mapStateToProps({posts}, ownProps) {
+function mapStateToProps({currentPost}, ownProps) {
     const postId = ownProps.location.pathname.slice(6);
-    const post = posts.items[postId] || null;
+    const {post, loading, comments, voting} = currentPost;
 
     return {
-        post
+        postId,
+        post,
+        loading,
+        voting,
+        comments
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        addVote: (postId, positive) => dispatch(votePost(postId, positive))
+        fetchPost: id => dispatch(fetchPost(id)),
+        orderComments: c => dispatch(orderPostComments(c)),
+        votePost: (id, positive) => dispatch(votePost(id, positive)),
+        clearCurrentPost: () => dispatch(clearCurrentPost())
     }
 }
 

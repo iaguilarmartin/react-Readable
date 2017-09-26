@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { createComment, updateComment } from '../actions/commentsActions';
 
 class EditComment extends Component {
     createComment(e) {
@@ -13,19 +11,13 @@ class EditComment extends Component {
             parentId: this.props.postId
         };
 
-        if (this.props.commentId) {
-            this.props.updateComment(this.props.commentId, data);
-        } else {
-            this.props.createComment(data);
-        }
-
         e.target.reset();
 
-        this.props.commentSaved && this.props.commentSaved();
+        this.props.commentSaved(data, this.props.comment !== null);
     }
 
     render() {
-        const { author, body } = this.props;
+        const { author, body } = this.props.comment || {};
 
         return (
             <form onSubmit={e => this.createComment(e)}>
@@ -46,31 +38,8 @@ class EditComment extends Component {
 }
 
 EditComment.propTypes = {
-    commentId: PropTypes.string,
-    postId: PropTypes.string.isRequired,
-    commentSaved: PropTypes.func
+    comment: PropTypes.object,
+    commentSaved: PropTypes.func.isRequired
 };
 
-function mapStateToProps({ comments }, ownProps) {
-    const commentId = ownProps.commentId;
-    if (!commentId) {
-        return {};
-    }
-
-    const comment = comments.items[commentId];
-    const { author, body } = comment;
-
-    return {
-        author,
-        body
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        createComment: data => dispatch(createComment(data)),
-        updateComment: (commentId, data) => dispatch(updateComment(commentId, data))
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditComment);
+export default EditComment;

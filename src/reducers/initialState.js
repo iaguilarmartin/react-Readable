@@ -5,11 +5,17 @@ const initialState = {
 		error: null,
         items: []
     },
-    comments: {
-		sortBy: "score",
-		loading: false,
-		error: null,
-        items: []
+    currentPost: {
+        loading: false,
+        error: null,
+        post: null,
+        voting: false,
+        saving: false,
+        deleting: false,
+        comments: {
+            sortBy: "score",
+            items: []
+        }
     },
     categories: {
 		loading: false,
