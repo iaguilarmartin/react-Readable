@@ -5,15 +5,9 @@ class EditComment extends Component {
     createComment(e) {
         e.preventDefault();
 
-        const data = {
-            body: e.target.body.value,
-            author: e.target.author.value,
-            parentId: this.props.postId
-        };
+		this.props.commentSaved(e.target.author.value, e.target.body.value);
 
-        e.target.reset();
-
-        this.props.commentSaved(data, this.props.comment !== null);
+		e.target.reset();
     }
 
     render() {
@@ -22,7 +16,7 @@ class EditComment extends Component {
         return (
             <form onSubmit={e => this.createComment(e)}>
                 <div className="input-field col s6">
-                    <input id="authorInput" type="text" name="author" defaultValue={author} className="validate" placeholder="e.g. trinity"/>
+                    <input id="authorInput" type="text" disabled={this.props.comment !== undefined} name="author" defaultValue={author} className="validate" placeholder="e.g. trinity"/>
                     <label className="active" htmlFor="authorInput">Author</label>
                 </div>
                 <div className="col s12">

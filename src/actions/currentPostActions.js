@@ -7,6 +7,10 @@ export const VOTE_POST = 'VOTE_POST';
 export const DELETE_POST = 'DELETE_POST';
 export const UPDATE_POST = 'UPDATE_POST';
 export const CREATE_POST = 'CREATE_POST';
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const VOTE_COMMENT = 'VOTE_COMMENT';
+export const UPDATE_COMMENT = 'UPDATE_COMMENT';
+export const DELETE_COMMENT = 'DELETE_COMMENT';
 
 export function fetchPost(id) {
     return dispatch => {
@@ -71,6 +75,46 @@ export function updatePost(postId, title, body) {
     }
 }
 
+export function addComment(body, author, postId) {
+    return dispatch => {
+        dispatch(performPostRequest(ADD_COMMENT));
+
+        return api.comments.create(body, author, postId)
+            .then(comment => dispatch(commentUpdateResponse(ADD_COMMENT, null, comment)))
+            .catch(err => dispatch(commentUpdateResponse(ADD_COMMENT, err)));
+    }
+}
+
+export function updateComment(id, body) {
+    return dispatch => {
+        dispatch(performPostRequest(UPDATE_COMMENT));
+
+        return api.comments.update(id, body)
+            .then(comment => dispatch(commentUpdateResponse(UPDATE_COMMENT, null, comment)))
+            .catch(err => dispatch(commentUpdateResponse(UPDATE_COMMENT, err)));
+    }
+}
+
+export function deleteComment(id) {
+    return dispatch => {
+        dispatch(performPostRequest(DELETE_COMMENT));
+
+        return api.comments.delete(id)
+            .then(() => dispatch(commentUpdateResponse(DELETE_COMMENT, null, id)))
+            .catch(err => dispatch(commentUpdateResponse(DELETE_COMMENT, err)));
+    }
+}
+
+export function voteComment(id, positive = false) {
+    return dispatch => {
+        dispatch(performPostRequest(VOTE_COMMENT));
+
+        return api.comments.vote(id, positive)
+            .then(comment => dispatch(commentUpdateResponse(VOTE_COMMENT, null, comment)))
+            .catch(err => dispatch(commentUpdateResponse(VOTE_COMMENT, err)));
+    }
+}
+
 function performPostRequest(type) {
     return {
         type,
@@ -94,5 +138,14 @@ function postUpdateResponse(type, error, post = null) {
         pending: false,
         error,
         post
+    };
+}
+
+function commentUpdateResponse(type, error, comment = null) {
+    return {
+        type,
+        pending: false,
+        error,
+        comment
     };
 }

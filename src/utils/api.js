@@ -82,7 +82,43 @@ const API = {
 	    get (postId) {
             return fetch(`${baseUrl}/posts/${postId}/comments`, { headers })
                 .then(res => res.json());
-        }
+        },
+
+		vote(id, positive) {
+		    const data = {
+                option: positive ? 'upVote' : 'downVote'
+            };
+
+            return fetch(`${baseUrl}/comments/${id}`, { method: 'POST', headers, body: JSON.stringify(data) })
+                .then(res => res.json());
+		},
+
+		update(id, body) {
+            const data = {
+                timestamp: moment.utc().valueOf(),
+                body
+            };
+
+            return fetch(`${baseUrl}/comments/${id}`, { method: 'PUT', headers, body: JSON.stringify(data) })
+                .then(res => res.json());
+		},
+
+		create(body, author, postId) {
+            const data = {
+                body,
+                author,
+                parentId: postId,
+                id: Uuid.raw(),
+                timestamp: moment.utc().valueOf(),
+            };
+
+            return fetch(`${baseUrl}/comments`, { method: 'POST', headers, body: JSON.stringify(data) })
+                .then(res => res.json());
+        },
+
+		delete(id) {
+			return fetch(`${baseUrl}/comments/${id}`, { method: 'DELETE', headers });
+		}
     }
 };
 

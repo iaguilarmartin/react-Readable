@@ -12,8 +12,21 @@ class CommentsList extends Component {
         editingComment: null
     };
 
-    deleteComment(commentId) {
-        this.props.onDeleted(commentId);
+    deleteComment(comment) {
+        this.props.onDeleted(comment.id);
+        this.setState({
+            editingComment: null,
+            showEditDialog: false
+        });
+	}
+
+	createComment(author, body) {
+		this.props.onCreated(author, body);
+    }
+
+	saveComment(comment, body) {
+		this.props.onSaved(comment.id, body);
+
         this.setState({
             editingComment: null,
             showEditDialog: false
@@ -30,9 +43,9 @@ class CommentsList extends Component {
     closeEditCommentDialog = () => this.setState({showEditDialog: false});
 
     render() {
-        const { comments, order, postId, onVoted, onOrderChanged } = this.props;
+        const { comments, order, onVoted, onOrderChanged } = this.props;
 
-        let commentsList = comments.filter(comment => !comment.deleted);
+        let commentsList = comments.filter(comment => comment && !comment.deleted);
         commentsList.sort((a, b) =>
             order === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
         );
@@ -53,7 +66,7 @@ class CommentsList extends Component {
                     <li className="collection-item new-comment">
                         <span className="title">Add new comment</span>
                         <div className="row">
-                            <EditComment commentSaved={this.closeEditCommentDialog}/>
+                            <EditComment commentSaved={(author, body) => this.createComment(author, body)}/>
                         </div>
                     </li>
                 </ul>
@@ -69,7 +82,7 @@ class CommentsList extends Component {
                         <div className="new-comment">
                             <span className="close" onClick={this.closeEditCommentDialog}>X</span>
                             <h5 className="title">Edit comment</h5>
-                            <EditComment comment={this.state.editingComment} commentSaved={this.closeEditCommentDialog}/>
+                            <EditComment comment={this.state.editingComment} commentSaved={(author, body) => this.saveComment(this.state.editingComment, body)}/>
                             <a onClick={() => this.deleteComment(this.state.editingComment)} className="waves-effect waves-red btn-flat"><i className="material-icons left">delete</i>Delete</a>
                         </div>
                     )}
@@ -81,9 +94,10 @@ class CommentsList extends Component {
 
 CommentsList.propTypes = {
     order: PropTypes.string.isRequired,
-    postId: PropTypes.string.isRequired,
     comments: PropTypes.arrayOf(PropTypes.object).isRequired,
-    onVoted: PropTypes.func.isRequired,
+	onVoted: PropTypes.func.isRequired,
+	onCreated: PropTypes.func.isRequired,
+	onSaved: PropTypes.func.isRequired,
     onDeleted: PropTypes.func.isRequired,
     onOrderChanged: PropTypes.func.isRequired,
 };

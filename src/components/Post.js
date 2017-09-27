@@ -6,7 +6,16 @@ import avatarImg from '../images/avatar.png';
 import CommentsList from './CommentsList';
 import Score from './Score';
 import FloatingButton from './FloatingButton';
-import { fetchPost, orderPostComments, votePost, clearCurrentPost } from '../actions/currentPostActions';
+import {
+	fetchPost,
+	orderPostComments,
+	votePost,
+	clearCurrentPost,
+	addComment,
+	updateComment,
+	deleteComment,
+	voteComment
+} from '../actions/currentPostActions';
 
 class Post extends Component {
     componentWillMount() {
@@ -26,7 +35,7 @@ class Post extends Component {
     }
 
     render() {
-        const { post, loading, comments, orderComments, voting } = this.props;
+        const { post, loading, comments, orderComments, voting, addComment, updateComment, deleteComment, voteComment } = this.props;
 
         if (loading) {
             return (<h5>Loading post data...</h5>);
@@ -36,6 +45,7 @@ class Post extends Component {
         }
 
         const dateString = moment(post.timestamp).format('LL');
+		const commentsArray = Object.keys(comments.items).map(commentId => comments.items[commentId]);
 
         return (
             <div className="row">
@@ -59,12 +69,13 @@ class Post extends Component {
                         </div>
                     </div>
 
-                    <CommentsList postId={post.id}
-                                  comments={comments.items}
-                                  onVoted={() => {}}
-                                  onDeleted={() => {}}
-                                  onOrderChanged={c => orderComments(c)}
-                                  order={comments.sortBy}/>
+                    <CommentsList comments={commentsArray}
+							onCreated={(author, body) => addComment(body, author, post.id)}
+							onSaved={(id, body) => updateComment(id, body)}
+							onVoted={(id, positive) => voteComment(id, positive)}
+							onDeleted={id => deleteComment(id)}
+							onOrderChanged={c => orderComments(c)}
+							order={comments.sortBy}/>
                 </div>
             </div>
         )
@@ -89,7 +100,11 @@ function mapDispatchToProps(dispatch) {
         fetchPost: id => dispatch(fetchPost(id)),
         orderComments: c => dispatch(orderPostComments(c)),
         votePost: (id, positive) => dispatch(votePost(id, positive)),
-        clearCurrentPost: () => dispatch(clearCurrentPost())
+		clearCurrentPost: () => dispatch(clearCurrentPost()),
+		addComment: (body, author, postId) => dispatch(addComment(body, author, postId)),
+		updateComment: (id, body) => dispatch(updateComment(id, body)),
+		deleteComment: id => dispatch(deleteComment(id)),
+		voteComment: (id, positive) => dispatch(voteComment(id, positive))
     }
 }
 

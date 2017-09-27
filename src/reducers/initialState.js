@@ -13,8 +13,12 @@ const initialState = {
         saving: false,
         deleting: false,
         comments: {
-            sortBy: "score",
-            items: []
+			sortBy: "score",
+			saving: false,
+			deleting: false,
+			voting: false,
+			error: null,
+            items: {}
         }
     },
     categories: {

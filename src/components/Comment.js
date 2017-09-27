@@ -5,7 +5,7 @@ import moment from 'moment';
 import Score from './Score';
 
 const Comment = function(props) {
-    const {timestamp, author, id, voteScore, text} = props.comment;
+    const {timestamp, author, id, voteScore, body} = props.comment;
 
     const dateString = moment(timestamp).format('LL');
 
@@ -14,7 +14,7 @@ const Comment = function(props) {
             <i className="material-icons" onClick={p => props.onEdit()}>edit</i>
             <span className="title red-text text-lighten-1">{author}</span>
             <p>
-                {text}
+                {body}
             </p>
             <label>{dateString}</label>
             <Score score={voteScore} onVote={p => props.onVote(id, p)}/>
