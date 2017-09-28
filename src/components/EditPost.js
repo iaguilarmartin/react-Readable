@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { fetchPost, deletePost, updatePost, createPost, clearCurrentPost } from '../actions/currentPostActions';
+import { isEmptyObject } from '../utils/utils';
 
 class EditPost extends Component {
 
@@ -45,7 +46,7 @@ class EditPost extends Component {
         if (loading) {
             return (<h5>Loading post data...</h5>);
         }
-        else if (postId && (!post || post.deleted)) {
+        else if (postId && (!post || isEmptyObject(post) || post.deleted)) {
             return (<h5>Ups! This post is no longer available</h5>);
         }
 

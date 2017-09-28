@@ -93,6 +93,12 @@
     bottom: 15px;
 }
 
+.post-delete {
+    position: absolute;
+    right: 95px;
+    bottom: 15px;
+}
+
 .new-comment .row {
     margin-top: 20px;
 }

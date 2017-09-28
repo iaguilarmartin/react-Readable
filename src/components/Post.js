@@ -6,10 +6,12 @@ import avatarImg from '../images/avatar.png';
 import CommentsList from './CommentsList';
 import Score from './Score';
 import FloatingButton from './FloatingButton';
+import { isEmptyObject } from '../utils/utils';
 import {
 	fetchPost,
 	orderPostComments,
 	votePost,
+	deletePost,
 	clearCurrentPost,
 	addComment,
 	updateComment,
@@ -24,6 +26,12 @@ class Post extends Component {
 
     componentWillUnmount() {
         this.props.clearCurrentPost();
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.deleting && !this.props.deleting && (!this.props.post || isEmptyObject(this.props.post))) {
+            this.props.history.push('/');
+        }
     }
 
     vote(positive) {
@@ -32,6 +40,10 @@ class Post extends Component {
 
     edit() {
         this.props.history.push('/edit-post/' + this.props.postId);
+	}
+
+	delete() {
+        this.props.deletePost(this.props.postId);
     }
 
     render() {
@@ -39,8 +51,7 @@ class Post extends Component {
 
         if (loading) {
             return (<h5>Loading post data...</h5>);
-        }
-        else if (!post || post.deleted) {
+        } else if (!post || isEmptyObject(post) || post.deleted) {
             return (<h5>Ups! This post is no longer available</h5>);
         }
 
@@ -66,6 +77,9 @@ class Post extends Component {
                             <div className="post-edit">
                                 <FloatingButton icon="edit" btnClick={() => this.edit()}/>
                             </div>
+							<div className="post-delete">
+                                <FloatingButton backgroundColor="white" color="red" icon="delete" isSmall={true} btnClick={() => this.delete()}/>
+                            </div>
                         </div>
                     </div>
 
@@ -84,21 +98,23 @@ class Post extends Component {
 
 function mapStateToProps({currentPost}, ownProps) {
     const postId = ownProps.location.pathname.slice(6);
-    const {post, loading, comments, voting} = currentPost;
+    const {post, loading, comments, voting, deleting} = currentPost;
 
     return {
         postId,
         post,
         loading,
         voting,
-        comments
+		comments,
+		deleting
     }
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         fetchPost: id => dispatch(fetchPost(id)),
-        orderComments: c => dispatch(orderPostComments(c)),
+		orderComments: c => dispatch(orderPostComments(c)),
+		deletePost: (id) => dispatch(deletePost(id)),
         votePost: (id, positive) => dispatch(votePost(id, positive)),
 		clearCurrentPost: () => dispatch(clearCurrentPost()),
 		addComment: (body, author, postId) => dispatch(addComment(body, author, postId)),

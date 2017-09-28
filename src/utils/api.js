@@ -19,7 +19,7 @@ const API = {
 	categories: {
 	  	getAll () {
 			return fetch(`${baseUrl}/categories`, { headers })
-				.then(res => res.json())
+				.then(requestHandler)
 				.then(data => data.categories);
 		}
 	},
@@ -27,17 +27,17 @@ const API = {
 	posts: {
 		getAll () {
 			return fetch(`${baseUrl}/posts`, { headers })
-				.then(res => res.json());
+				.then(requestHandler);
 		},
 
 		getByCategory (category) {
 			return fetch(`${baseUrl}/${category}/posts`, { headers })
-				.then(res => res.json());
+				.then(requestHandler);
 		},
 
 		getOne(id) {
-            return fetch(`${baseUrl}/posts/${id}`, { headers })
-                .then(res => res.json());
+			return fetch(`${baseUrl}/posts/${id}`, { headers })
+				.then(requestHandler);
 		},
 
 		vote(id, positive) {
@@ -46,7 +46,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/posts/${id}`, { method: 'POST', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
         },
 
         update(id, title, body) {
@@ -56,7 +56,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/posts/${id}`, { method: 'PUT', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
         },
 
         create(title, body, author, category) {
@@ -70,7 +70,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/posts`, { method: 'POST', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
         },
 
         delete(id) {
@@ -81,7 +81,7 @@ const API = {
 	comments: {
 	    get (postId) {
             return fetch(`${baseUrl}/posts/${postId}/comments`, { headers })
-                .then(res => res.json());
+				.then(requestHandler);
         },
 
 		vote(id, positive) {
@@ -90,7 +90,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/comments/${id}`, { method: 'POST', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
 		},
 
 		update(id, body) {
@@ -100,7 +100,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/comments/${id}`, { method: 'PUT', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
 		},
 
 		create(body, author, postId) {
@@ -113,7 +113,7 @@ const API = {
             };
 
             return fetch(`${baseUrl}/comments`, { method: 'POST', headers, body: JSON.stringify(data) })
-                .then(res => res.json());
+				.then(requestHandler);
         },
 
 		delete(id) {
@@ -121,5 +121,13 @@ const API = {
 		}
     }
 };
+
+function requestHandler(res) {
+	if (res.status !== 200) {
+		throw res.statusText;
+	} else {
+		return res.json()
+	}
+}
 
 export default API;
