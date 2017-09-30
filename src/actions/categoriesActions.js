@@ -1,6 +1,5 @@
 import api from '../utils/api';
-
-export const FETCH_CATEGORIES = 'FETCH_CATEGORIES';
+import { FETCH_CATEGORIES } from './types';
 
 export function fetchCategories() {
 	return dispatch => {

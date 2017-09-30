@@ -5,18 +5,18 @@ import { connect } from 'react-redux';
 import PostsListItem from './PostsListItem';
 import FloatingButton from './FloatingButton';
 import SelectOrder from './SelectOrder';
-import { orderPosts, fetchPosts } from '../actions/postsActions';
+import * as actions from '../actions/postsActions';
 
 class PostsList extends Component {
-	componentWillMount() {
+    componentDidMount() {
 		if (!this.props.stillLoading) {
 			this.props.fetchPosts(this.props.category.path);
 		}
 	}
 
-	componentWillUpdate(nextProps) {
-		if (!nextProps.stillLoading && (!this.props.category || nextProps.category.path !== this.props.category.path)) {
-			nextProps.fetchPosts(nextProps.category.path);
+    componentDidUpdate(prevProps) {
+		if (!this.props.stillLoading && (!prevProps.category || this.props.category.path !== prevProps.category.path)) {
+            this.props.fetchPosts(this.props.category.path);
 		}
 	}
 
@@ -25,7 +25,7 @@ class PostsList extends Component {
     }
 
     sortPosts(criteria) {
-        this.props.changeOrder(criteria);
+        this.props.orderPosts(criteria);
     }
 
     render() {
@@ -44,7 +44,10 @@ class PostsList extends Component {
 							<PostsListItem key={post.id}
 										id={post.id}
 										title={post.title}
+                                        voting={this.props.votingPosts.includes(post.id)}
 										timestamp={post.timestamp}
+                                        comments={post.comments}
+                                        onVote={(postId, positive) => this.props.votePost(postId, positive)}
 										score={post.voteScore}
 							/>
 						))}
@@ -63,6 +66,7 @@ function mapStateToProps({posts, categories}, ownProps) {
 	}
 
 	const order = posts.sortBy;
+	const votingPosts = posts.voting;
 	const query = queryString.parse(ownProps.location.search);
 	const category = (query.category && categories.items.find(category => category.path === query.category))
 		|| {name: 'All posts', path: null };
@@ -76,15 +80,9 @@ function mapStateToProps({posts, categories}, ownProps) {
     return {
         posts: postsList,
         order,
-		category
+		category,
+        votingPosts
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-		changeOrder: criteria => dispatch(orderPosts(criteria)),
-		fetchPosts: category => dispatch(fetchPosts(category))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PostsList);
+export default connect(mapStateToProps, actions)(PostsList);

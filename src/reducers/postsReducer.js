@@ -2,17 +2,16 @@ import initialState from './initialState';
 
 import {
     ORDER_POSTS,
-	FETCH_POSTS
-} from '../actions/postsActions';
+	FETCH_POSTS,
+    POSTS_VOTE_ONE
+} from '../actions/types';
 
 const postsReducer = function (state = initialState.posts, action) {
-    const {type, criteria} = action;
-
-    switch (type) {
+    switch (action.type) {
         case ORDER_POSTS:
             return {
                 ...state,
-                sortBy: criteria
+                sortBy: action.criteria
             };
 		case FETCH_POSTS: {
 			const { error, posts, pending } = action;
@@ -24,6 +23,27 @@ const postsReducer = function (state = initialState.posts, action) {
 				items: pending ? [] : (posts || [])
 			}
 		}
+        case POSTS_VOTE_ONE: {
+            const { error, score, postId, pending } = action;
+
+            if (pending) {
+                return {
+                    ...state,
+                    voting: [
+                        ...state.voting,
+                        postId
+                    ],
+                    error: null
+                }
+            } else {
+                return {
+                    ...state,
+                    error,
+                    voting: state.voting.filter(item => item !== postId),
+                    items: state.items.map(item => !error && postId === item.id ? {...item, voteScore: score} : item)
+                }
+            }
+        }
         default:
             return state;
     }

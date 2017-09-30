@@ -7,20 +7,10 @@ import CommentsList from './CommentsList';
 import Score from './Score';
 import FloatingButton from './FloatingButton';
 import { isEmptyObject } from '../utils/utils';
-import {
-	fetchPost,
-	orderPostComments,
-	votePost,
-	deletePost,
-	clearCurrentPost,
-	addComment,
-	updateComment,
-	deleteComment,
-	voteComment
-} from '../actions/currentPostActions';
+import * as actions from '../actions/currentPostActions';
 
 class Post extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.fetchPost(this.props.postId);
     }
 
@@ -47,7 +37,7 @@ class Post extends Component {
     }
 
     render() {
-        const { post, loading, comments, orderComments, voting, addComment, updateComment, deleteComment, voteComment } = this.props;
+        const { post, loading, comments, orderPostComments, voting, addComment, updateComment, deleteComment, voteComment } = this.props;
 
         if (loading) {
             return (<h5>Loading post data...</h5>);
@@ -88,7 +78,7 @@ class Post extends Component {
 							onSaved={(id, body) => updateComment(id, body)}
 							onVoted={(id, positive) => voteComment(id, positive)}
 							onDeleted={id => deleteComment(id)}
-							onOrderChanged={c => orderComments(c)}
+							onOrderChanged={c => orderPostComments(c)}
 							order={comments.sortBy}/>
                 </div>
             </div>
@@ -110,18 +100,4 @@ function mapStateToProps({currentPost}, ownProps) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        fetchPost: id => dispatch(fetchPost(id)),
-		orderComments: c => dispatch(orderPostComments(c)),
-		deletePost: (id) => dispatch(deletePost(id)),
-        votePost: (id, positive) => dispatch(votePost(id, positive)),
-		clearCurrentPost: () => dispatch(clearCurrentPost()),
-		addComment: (body, author, postId) => dispatch(addComment(body, author, postId)),
-		updateComment: (id, body) => dispatch(updateComment(id, body)),
-		deleteComment: id => dispatch(deleteComment(id)),
-		voteComment: (id, positive) => dispatch(voteComment(id, positive))
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Post);
+export default connect(mapStateToProps, actions)(Post);

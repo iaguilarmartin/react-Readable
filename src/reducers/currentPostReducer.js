@@ -11,7 +11,7 @@ import {
 	UPDATE_COMMENT,
 	DELETE_COMMENT,
 	VOTE_COMMENT
-} from '../actions/currentPostActions';
+} from '../actions/types';
 
 const currentPostReducer = function (state = initialState.currentPost, action) {
     const { type, pending } = action;

@@ -1,5 +1,5 @@
 import initialState from './initialState';
-import { FETCH_CATEGORIES } from '../actions/categoriesActions';
+import { FETCH_CATEGORIES } from '../actions/types';
 
 const categoriesReducer = function (state = initialState.categories, action) {
 	const { type, error, categories, pending } = action;

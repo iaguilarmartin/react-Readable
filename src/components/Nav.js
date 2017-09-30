@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { fetchCategories } from '../actions/categoriesActions';
+import * as actions from '../actions/categoriesActions';
 
 class Nav extends Component {
-	componentWillMount () {
+	componentDidMount () {
 		this.props.fetchCategories();
 	}
 
@@ -35,10 +35,4 @@ function mapStateToProps({categories}) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-	return {
-		fetchCategories: () => dispatch(fetchCategories())
-	}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Nav);
+export default connect(mapStateToProps, actions)(Nav);

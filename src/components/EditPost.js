@@ -5,7 +5,7 @@ import { isEmptyObject } from '../utils/utils';
 
 class EditPost extends Component {
 
-    componentWillMount() {
+    componentDidMount() {
         const { postId, fetchPost } = this.props;
 
         postId && fetchPost(postId);
@@ -107,14 +107,4 @@ function mapStateToProps({ currentPost, categories }, ownProps) {
     }
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        fetchPost: id => dispatch(fetchPost(id)),
-        createPost: (title, body, author, category) => dispatch(createPost(title, body, author, category)),
-        updatePost: (postId, title, body) => dispatch(updatePost(postId, title, body)),
-        deletePost: postId => dispatch(deletePost(postId)),
-        clearCurrentPost: () => dispatch(clearCurrentPost())
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditPost);
+export default connect(mapStateToProps, { fetchPost, deletePost, updatePost, createPost, clearCurrentPost })(EditPost);

@@ -2,6 +2,7 @@ const initialState = {
     posts: {
 		sortBy: "score",
 		loading: false,
+        voting: [],
 		error: null,
         items: []
     },

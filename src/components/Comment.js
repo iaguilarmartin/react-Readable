@@ -17,7 +17,7 @@ const Comment = function(props) {
                 {body}
             </p>
             <label>{dateString}</label>
-            <Score score={voteScore} onVote={p => props.onVote(id, p)}/>
+            <Score score={voteScore} onVote={p => props.onVote(id, p)} isSmall={true}/>
         </li>
     );
 };
