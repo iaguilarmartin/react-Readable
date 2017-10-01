@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import Score from './Score';
+import Score from '../app/Score';
 
 const Comment = function(props) {
     const {timestamp, author, id, voteScore, body} = props.comment;
@@ -11,13 +11,13 @@ const Comment = function(props) {
 
     return (
         <li className="collection-item avatar comment">
-            <i className="material-icons" onClick={p => props.onEdit()}>edit</i>
+            <i className="material-icons" onClick={() => props.onEdit()}>edit</i>
             <span className="title red-text text-lighten-1">{author}</span>
             <p>
                 {body}
             </p>
             <label>{dateString}</label>
-            <Score score={voteScore} onVote={p => props.onVote(id, p)} isSmall={true}/>
+            <Score score={voteScore} onVote={p => props.onVote(id, p)} isSmall/>
         </li>
     );
 };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchPost, deletePost, updatePost, createPost, clearCurrentPost } from '../actions/currentPostActions';
-import { isEmptyObject } from '../utils/utils';
+import { fetchPost, deletePost, updatePost, createPost, clearCurrentPost } from './currentPostActions';
+import { isEmptyObject, getPostIdFromURL } from '../utils/utils';
 
 class EditPost extends Component {
 
@@ -13,7 +13,7 @@ class EditPost extends Component {
 
     componentDidUpdate(prevProps) {
         if (prevProps.saving && !this.props.saving && this.props.post) {
-            this.props.history.push('/post/' + this.props.post.id);
+            this.props.history.push(`/${this.props.post.category}/${this.props.post.id}`);
         } else if (prevProps.deleting && !this.props.deleting && !this.props.post) {
             this.props.history.push('/');
         }
@@ -58,7 +58,7 @@ class EditPost extends Component {
                         <div className="row">
                             <form className="col s12" onSubmit={e => this.savePost(e, post.id)}>
                                 <div className="input-field col s6">
-                                    <input id="authorInput" type="text" name="author" disabled={postId} defaultValue={post.author} className="validate" placeholder="e.g. trinity"/>
+                                    <input id="authorInput" type="text" name="author" disabled={postId} defaultValue={post.author} className="validate" required placeholder="e.g. trinity"/>
                                     <label className="active" htmlFor="authorInput">Author</label>
                                 </div>
                                 <div className="col s6">
@@ -68,12 +68,12 @@ class EditPost extends Component {
                                     </select>
                                 </div>
                                 <div className="input-field col s12">
-                                    <input id="titleInput" type="text" name="title" defaultValue={post.title} className="validate" placeholder="e.g. Learning React"/>
+                                    <input id="titleInput" type="text" name="title" defaultValue={post.title} className="validate" required placeholder="e.g. Learning React"/>
                                     <label className="active" htmlFor="titleInput">Title</label>
                                 </div>
                                 <div className="col s12">
                                     <label htmlFor="bodyInput">Body</label>
-                                    <textarea id="bodyInput" name="body" className="grey lighten-4" defaultValue={post.body} rows="5"/>
+                                    <textarea id="bodyInput" name="body" className="grey lighten-4" defaultValue={post.body} required rows="5"/>
                                 </div>
                                 <div className="col s6">
                                     <button type="submit" disabled={saving || deleting} className="waves-effect waves-light btn red"><i className="material-icons right">send</i>Send</button>
@@ -94,7 +94,7 @@ class EditPost extends Component {
 }
 
 function mapStateToProps({ currentPost, categories }, ownProps) {
-    const postId = ownProps.location.pathname.slice(11);
+    const postId = getPostIdFromURL(ownProps.location.pathname);
     const { post, loading, saving, deleting } = currentPost;
 
     return {

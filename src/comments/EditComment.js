@@ -16,12 +16,12 @@ class EditComment extends Component {
         return (
             <form onSubmit={e => this.createComment(e)}>
                 <div className="input-field col s6">
-                    <input id="authorInput" type="text" disabled={this.props.comment !== undefined} name="author" defaultValue={author} className="validate" placeholder="e.g. trinity"/>
+                    <input id="authorInput" type="text" required disabled={this.props.comment !== undefined} name="author" defaultValue={author} className="validate" placeholder="e.g. trinity"/>
                     <label className="active" htmlFor="authorInput">Author</label>
                 </div>
                 <div className="col s12">
                     <label htmlFor="bodyInput">Body</label>
-                    <textarea id="bodyInput" name="body" className="grey lighten-4" defaultValue={body} rows="5"/>
+                    <textarea id="bodyInput" name="body" required className="grey lighten-4" defaultValue={body} rows="5"/>
                 </div>
                 <div className="col s12">
                     <button type="submit" className="waves-effect waves-light btn red"><i className="material-icons right">send</i>Send</button>

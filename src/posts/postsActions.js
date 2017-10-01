@@ -1,9 +1,9 @@
 import api from '../utils/api';
-import { POSTS_VOTE_ONE, FETCH_POSTS, ORDER_POSTS } from './types';
+import * as types from './postsActionTypes';
 
 export function orderPosts(criteria) {
     return {
-        type: ORDER_POSTS,
+        type: types.ORDER_POSTS,
         criteria
     }
 }
@@ -39,7 +39,7 @@ export function votePost(postId, positive) {
 
 function votePostsRequest(postId) {
     return {
-        type: POSTS_VOTE_ONE,
+        type: types.POSTS_VOTE_ONE,
         pending: true,
         postId
     };
@@ -47,7 +47,7 @@ function votePostsRequest(postId) {
 
 function votePostsResult(postId, error, score) {
     return {
-        type: POSTS_VOTE_ONE,
+        type: types.POSTS_VOTE_ONE,
         pending: false,
         error,
         score,
@@ -57,14 +57,14 @@ function votePostsResult(postId, error, score) {
 
 function fetchPostsRequest() {
 	return {
-		type: FETCH_POSTS,
+		type: types.FETCH_POSTS,
 		pending: true
 	};
 }
 
 function fetchPostsResult(error, posts = null) {
 	return {
-		type: FETCH_POSTS,
+		type: types.FETCH_POSTS,
 		pending: false,
 		error,
 		posts

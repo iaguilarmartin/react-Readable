@@ -1,23 +1,11 @@
-import initialState from './initialState';
-import {
-    FETCH_POST,
-    VOTE_POST,
-    UPDATE_POST,
-    CREATE_POST,
-    ORDER_POST_COMMENTS,
-    CLEAR_POST,
-	DELETE_POST,
-	ADD_COMMENT,
-	UPDATE_COMMENT,
-	DELETE_COMMENT,
-	VOTE_COMMENT
-} from '../actions/types';
+import initialState from '../store/initialState';
+import * as types from './currentPostActionTypes';
 
 const currentPostReducer = function (state = initialState.currentPost, action) {
     const { type, pending } = action;
 
     switch (type) {
-        case FETCH_POST: {
+        case types.FETCH_POST: {
             const { error, post, comments } = action;
 			const mappedComments = comments && comments.reduce((value, comment) => {
 				value[comment.id] = comment;
@@ -35,12 +23,12 @@ const currentPostReducer = function (state = initialState.currentPost, action) {
                 }
             }
         }
-        case CLEAR_POST: {
+        case types.CLEAR_POST: {
             return {
                 ...initialState.currentPost
             }
         }
-        case ORDER_POST_COMMENTS: {
+        case types.ORDER_POST_COMMENTS: {
             return {
                 ...state,
                 comments: {
@@ -49,27 +37,27 @@ const currentPostReducer = function (state = initialState.currentPost, action) {
                 }
             }
         }
-        case DELETE_POST: {
+        case types.DELETE_POST: {
             return {
                 ...state,
                 deleting: true
 			};
 		}
-        case CREATE_POST:
-        case UPDATE_POST: {
+        case types.CREATE_POST:
+        case types.UPDATE_POST: {
             return postModifiedState(state, action, 'saving');
 		}
-		case VOTE_POST: {
+		case types.VOTE_POST: {
 			return postModifiedState(state, action, 'voting');
         }
-		case UPDATE_COMMENT:
-		case ADD_COMMENT: {
+		case types.UPDATE_COMMENT:
+		case types.ADD_COMMENT: {
 			return postCommentsModifiedState(state, action, 'saving');
 		}
-		case VOTE_COMMENT: {
+		case types.VOTE_COMMENT: {
 			return postCommentsModifiedState(state, action, 'voting');
 		}
-		case DELETE_COMMENT: {
+		case types.DELETE_COMMENT: {
 			return postCommentsModifiedState(state, action, 'deleting');
 		}
         default:

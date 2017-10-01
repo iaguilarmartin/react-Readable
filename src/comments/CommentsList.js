@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Modal from 'react-modal';
 
 import Comment from './Comment';
-import SelectOrder from './SelectOrder';
+import SelectOrder from '../app/SelectOrder';
 import EditComment from './EditComment';
 
 class CommentsList extends Component {
@@ -45,14 +45,14 @@ class CommentsList extends Component {
     render() {
         const { comments, order, onVoted, onOrderChanged } = this.props;
 
-        let commentsList = comments.filter(comment => comment && !comment.deleted);
+        const commentsList = comments.filter(comment => comment && !comment.deleted);
         commentsList.sort((a, b) =>
             order === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
         );
 
         return (
             <div className="section">
-                <h5>Comments</h5>
+                <h5>Comments ({comments.length})</h5>
                 <SelectOrder initialValue={order}  onOrderChanged={c => onOrderChanged(c)}/>
                 <ul className="collection col s12 comments-container">
                     {commentsList.map(comment => (

@@ -1,19 +1,14 @@
-import initialState from './initialState';
-
-import {
-    ORDER_POSTS,
-	FETCH_POSTS,
-    POSTS_VOTE_ONE
-} from '../actions/types';
+import initialState from '../store/initialState';
+import * as types from './postsActionTypes';
 
 const postsReducer = function (state = initialState.posts, action) {
     switch (action.type) {
-        case ORDER_POSTS:
+        case types.ORDER_POSTS:
             return {
                 ...state,
                 sortBy: action.criteria
             };
-		case FETCH_POSTS: {
+		case types.FETCH_POSTS: {
 			const { error, posts, pending } = action;
 
 			return {
@@ -23,7 +18,7 @@ const postsReducer = function (state = initialState.posts, action) {
 				items: pending ? [] : (posts || [])
 			}
 		}
-        case POSTS_VOTE_ONE: {
+        case types.POSTS_VOTE_ONE: {
             const { error, score, postId, pending } = action;
 
             if (pending) {

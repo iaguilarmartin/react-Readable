@@ -3,11 +3,11 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 
 import avatarImg from '../images/avatar.png';
-import CommentsList from './CommentsList';
-import Score from './Score';
-import FloatingButton from './FloatingButton';
-import { isEmptyObject } from '../utils/utils';
-import * as actions from '../actions/currentPostActions';
+import CommentsList from '../comments/CommentsList';
+import Score from '../app/Score';
+import FloatingButton from '../app/FloatingButton';
+import { isEmptyObject, getPostIdFromURL } from '../utils/utils';
+import * as actions from './currentPostActions';
 
 class Post extends Component {
     componentDidMount() {
@@ -29,7 +29,7 @@ class Post extends Component {
     }
 
     edit() {
-        this.props.history.push('/edit-post/' + this.props.postId);
+        this.props.history.push(`/${this.props.post.category}/${this.props.postId}/edit`);
 	}
 
 	delete() {
@@ -87,7 +87,7 @@ class Post extends Component {
 }
 
 function mapStateToProps({currentPost}, ownProps) {
-    const postId = ownProps.location.pathname.slice(6);
+    const postId = getPostIdFromURL(ownProps.location.pathname);
     const {post, loading, comments, voting, deleting} = currentPost;
 
     return {

@@ -1,5 +1,5 @@
 import api from '../utils/api';
-import { FETCH_CATEGORIES } from './types';
+import * as types from './categoriesActionTypes';
 
 export function fetchCategories() {
 	return dispatch => {
@@ -12,14 +12,14 @@ export function fetchCategories() {
 
 function fetchCategoriesRequest() {
 	return {
-		type: FETCH_CATEGORIES,
+		type: types.FETCH_CATEGORIES,
 		pending: true
 	};
 }
 
 function fetchCategoriesResult(error, categories = null) {
 	return {
-		type: FETCH_CATEGORIES,
+		type: types.FETCH_CATEGORIES,
 		pending: false,
 		error,
 		categories

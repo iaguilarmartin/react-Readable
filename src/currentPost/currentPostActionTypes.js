@@ -9,9 +9,3 @@ export const ADD_COMMENT = 'ADD_COMMENT';
 export const VOTE_COMMENT = 'VOTE_COMMENT';
 export const UPDATE_COMMENT = 'UPDATE_COMMENT';
 export const DELETE_COMMENT = 'DELETE_COMMENT';
-
-export const ORDER_POSTS = 'ORDER_POSTS';
-export const FETCH_POSTS = 'FETCH_POSTS';
-export const POSTS_VOTE_ONE = 'POSTS_VOTE_ONE';
-
-export const FETCH_CATEGORIES = 'FETCH_CATEGORIES';

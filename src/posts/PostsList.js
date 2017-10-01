@@ -3,9 +3,9 @@ import queryString from 'query-string';
 import { connect } from 'react-redux';
 
 import PostsListItem from './PostsListItem';
-import FloatingButton from './FloatingButton';
-import SelectOrder from './SelectOrder';
-import * as actions from '../actions/postsActions';
+import FloatingButton from '../app/FloatingButton';
+import SelectOrder from '../app/SelectOrder';
+import * as actions from './postsActions';
 
 class PostsList extends Component {
     componentDidMount() {
@@ -16,12 +16,12 @@ class PostsList extends Component {
 
     componentDidUpdate(prevProps) {
 		if (!this.props.stillLoading && (!prevProps.category || this.props.category.path !== prevProps.category.path)) {
-            this.props.fetchPosts(this.props.category.path);
+		    this.props.fetchPosts(this.props.category.path);
 		}
 	}
 
     createPost() {
-        this.props.history.push("/edit-post");
+        this.props.history.push("/new-post");
     }
 
     sortPosts(criteria) {
@@ -44,6 +44,8 @@ class PostsList extends Component {
 							<PostsListItem key={post.id}
 										id={post.id}
 										title={post.title}
+                                        category={post.category}
+									   	author={post.author}
                                         voting={this.props.votingPosts.includes(post.id)}
 										timestamp={post.timestamp}
                                         comments={post.comments}
@@ -61,7 +63,7 @@ class PostsList extends Component {
 }
 
 function mapStateToProps({posts, categories}, ownProps) {
-	if (categories.loading || !categories.items) {
+	if (categories.loading || categories.items.length === 0) {
 		return { stillLoading: true };
 	}
 
@@ -71,8 +73,7 @@ function mapStateToProps({posts, categories}, ownProps) {
 	const category = (query.category && categories.items.find(category => category.path === query.category))
 		|| {name: 'All posts', path: null };
 
-    let postsList = posts.items.filter(post => !post.deleted);
-
+    const postsList = posts.items.filter(post => !post.deleted);
     postsList.sort((a, b) =>
         order === 'score' ? b.voteScore - a.voteScore : b.timestamp - a.timestamp
     );
