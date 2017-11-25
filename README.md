@@ -1,5 +1,5 @@
 # Readable
-A simple React web app where users are able to post content to predefined categories, comment on their posts and other users posts, and vote on posts and comments. Of course, they also are able to edit and delete posts and comments.
+A simple React + Redux + Materialize web app where users are able to post content to predefined categories, comment on their posts and other users posts, and vote on posts and comments. Of course, they also are able to edit and delete posts and comments.
 
 ## Installation
 
@@ -32,6 +32,10 @@ npm start
 **Readable** get posts and categories data from a server. The server is built in Node, but it is very simple. You won't need to edit the server code; instead, application talk to the server using documented API endpoints. It provides endpoints to manage storing, reading, updating, and deleting data for this application.
 
 Download or fork and clone the NodeJS [server repository](https://github.com/udacity/reactnd-project-readable-starter.git)
+
+## Demo
+
+**Readable** is available to be visited on [my personal web site](http://readable.iaguilarmartin.com)
 
 ## License
 
